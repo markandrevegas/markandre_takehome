@@ -13,7 +13,7 @@ In this setup, users can login and start conversations.
 ## Delivery
 
 - Spent 8 hours over 5 days
-- Note how many hours you have spent on the test.
+
 
 ## Setup
 
