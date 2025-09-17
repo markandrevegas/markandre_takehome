@@ -1,0 +1,84 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  @font-face {
+    font-family: 'Lexend';
+    src: url('./fonts/LexendVariable.ttf') format('ttf-variations');
+    font-weight: 100 900;
+    font-display: swap;
+    font-style: normal;
+  }
+
+  body {
+    @apply bg-gray-100 text-abyssal h-screen flex flex-col;
+    font-family: 'Lexend', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    margin: 0;
+  }
+  h1 {
+    @apply font-semibold mb-4 text-sky-600 font-sans;
+  }
+  input {
+    @apply bg-abyssal text-white block h-8 w-full px-2 focus:outline-none text-xs rounded-md;
+  }
+  input:-webkit-autofill {
+    @apply bg-abyssal !text-white;
+    -webkit-box-shadow: 0 0 0px 1000px rgba(244, 244, 245, 1) inset !important;
+  }
+  input::placeholder {
+    @apply bg-abyssal !text-white;
+  }
+  button {
+    @apply transition-colors duration-500 inline-flex w-max justify-center items-center border border-transparent bg-abyssal px-4 py-2 text-xs font-medium text-white shadow-sm hover:bg-zinc-200 hover:text-abyssal focus:outline-none disabled:opacity-50;
+  }
+}
+
+@layer components {
+  #app {
+    @apply flex flex-col h-full justify-center;
+  }
+  .container {
+    @apply max-w-72 flex flex-col bg-white mx-auto p-4 rounded-xl shadow-xl;
+    height: calc(100vh - 4rem);
+  }
+  .login-card {
+    @apply my-auto
+  }
+  .inbox {
+    @apply w-full flex-1 flex flex-col;
+  }
+  .main-content {
+    @apply flex-1 flex flex-col;
+  }
+  .button-svg {
+    @apply p-0 flex justify-center bg-white text-abyssal hover:bg-transparent hover:text-zinc-500
+  }
+  .menu-btn {
+    @apply p-1 flex justify-center bg-white text-abyssal w-max hover:bg-zinc-200
+  }
+  .close-btn {
+    @apply p-1 flex justify-center bg-white text-abyssal w-max hover:bg-zinc-200 absolute top-2 right-2
+  }
+  .messageList {
+    @apply text-xxs flex-1 flex flex-col overflow-y-scroll gap-2 h-96;
+  }
+  .error-msg {
+    @apply mt-4 border border-red-400 bg-red-100 p-2 text-xxs text-red-700
+  }
+  .li-style {
+    @apply rounded bg-zinc-100 p-2 text-xs hover:bg-abyssal hover:text-white
+  }
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s ease; /* adjust duration */
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}

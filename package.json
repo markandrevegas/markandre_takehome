@@ -1,0 +1,53 @@
+{
+  "name": "fe-dev0-takehome-assignment",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "express": "^4.21.2",
+    "marked": "^15.0.6",
+    "typescript": "^5.8.2",
+    "vue": "^3.5.12",
+    "ws": "^8.17.1"
+  },
+  "scripts": {
+    "dev": "concurrently \"npm run server\" \"vite\"",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "coverage": "vitest run --coverage",
+    "server": "nodemon server.js",
+    "format": "prettier --write 'src/*.vue'"
+  },
+  "eslintConfig": {
+    "extends": []
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.8.0",
+    "@testing-library/vue": "^8.1.0",
+    "@types/node": "^22.13.10",
+    "@vitejs/plugin-vue": "^5.2.1",
+    "autoprefixer": "^10.4.21",
+    "concurrently": "^9.1.2",
+    "jsdom": "^25.0.1",
+    "nodemon": "^3.1.9",
+    "prettier": "^3.6.2",
+    "prettier-plugin-tailwindcss": "^0.6.14",
+    "supertest": "^7.0.0",
+    "tailwindcss": "3.4.17",
+    "vite": "^6.0.5",
+    "vitest": "^2.1.9"
+  }
+}

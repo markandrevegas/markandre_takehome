@@ -1,0 +1,27 @@
+{
+  "tailwindCSS.tailwindConfig": "./tailwind.config.ts",
+  "tailwindCSS.experimental.configFile": null,
+  "tailwindCSS.validate": true,
+  "tailwindCSS.emmetCompletions": true,
+  "tailwindCSS.lint.cssConflict": "ignore",
+  "tailwindCSS.lint.invalidApply": "ignore",
+  "tailwindCSS.lint.invalidConfigPath": "ignore",
+  "tailwindCSS.lint.invalidTailwindDirective": "ignore",
+  "tailwindCSS.lint.recommendedVariantOrder": "ignore",
+  "tailwindCSS.includeLanguages": {
+    "vue": "html",
+    "typescript": "javascript"
+  },
+  "cSpell.words": [
+    "conv",
+    "convo",
+    "klaay",
+    "Lexend",
+    "Svar",
+    "takehome"
+  ],
+  "css.lint.unknownAtRules": "ignore",
+  "scss.lint.unknownAtRules": "ignore",
+  "less.lint.unknownAtRules": "ignore"
+}
+

@@ -1,0 +1,670 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Conversations API",
+    "version": "1.0.0",
+    "description": "An API for user authentication, listing conversations, retrieving a single conversation, creating conversations, and adding messages. All responses and requests follow the JSON:API specification using the media type application/vnd.api+json."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3001",
+      "description": "Local server"
+    }
+  ],
+  "paths": {
+    "/authenticate": {
+      "post": {
+        "summary": "Authenticate a user",
+        "description": "Validates user credentials and returns a token if successful.",
+        "tags": ["Authentication"],
+        "requestBody": {
+          "description": "JSON:API formatted authentication payload",
+          "required": true,
+          "content": {
+            "application/vnd.api+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuthenticateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Authentication successful",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthenticateResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized – Invalid username or password",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "Unsupported Media Type – Invalid Content-Type or Accept header",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/conversations": {
+      "get": {
+        "summary": "Get all conversations for the authenticated user",
+        "tags": ["Conversations"],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "description": "User token (user id) used for authentication",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Accept",
+            "in": "header",
+            "required": true,
+            "description": "Must be application/vnd.api+json",
+            "schema": {
+              "type": "string",
+              "example": "application/vnd.api+json"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of conversations for the user",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Conversation"
+                      }
+                    }
+                  },
+                  "required": ["data"]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized – No token provided or invalid token",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden – The user does not have access to the conversation",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "ApiToken": []
+          }
+        ]
+      },
+      "post": {
+        "summary": "Create a new conversation",
+        "tags": ["Conversations"],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "description": "User token (user id) used for authentication",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Accept",
+            "in": "header",
+            "required": true,
+            "description": "Must be application/vnd.api+json",
+            "schema": {
+              "type": "string",
+              "example": "application/vnd.api+json"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "JSON:API formatted conversation payload",
+          "required": true,
+          "content": {
+            "application/vnd.api+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConversationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Conversation created",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Conversation"
+                    }
+                  },
+                  "required": ["data"]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized – No token provided or invalid token",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "ApiToken": []
+          }
+        ]
+      }
+    },
+    "/conversations/{id}": {
+      "get": {
+        "summary": "Get a single conversation by ID",
+        "tags": ["Conversations"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the conversation",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "description": "User token (user id) used for authentication",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Accept",
+            "in": "header",
+            "required": true,
+            "description": "Must be application/vnd.api+json",
+            "schema": {
+              "type": "string",
+              "example": "application/vnd.api+json"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Conversation details",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Conversation"
+                    }
+                  },
+                  "required": ["data"]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized – No token provided or invalid token",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden – The user does not have access to this conversation",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found – Conversation does not exist",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "ApiToken": []
+          }
+        ]
+      },
+      "post": {
+        "summary": "Add a new message to a conversation",
+        "tags": ["Messages"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the conversation",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "description": "User token (user id) used for authentication",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Accept",
+            "in": "header",
+            "required": true,
+            "description": "Must be application/vnd.api+json",
+            "schema": {
+              "type": "string",
+              "example": "application/vnd.api+json"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "JSON:API formatted message payload",
+          "required": true,
+          "content": {
+            "application/vnd.api+json": {
+              "schema": {
+                "$ref": "#/components/schemas/MessageRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Message added to the conversation",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Message"
+                    }
+                  },
+                  "required": ["data"]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized – No token provided or invalid token",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden – The user does not have access to this conversation",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found – Conversation does not exist",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/vnd.api+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "ApiToken": []
+          }
+        ]
+      }
+    },
+    "/openapi.json": {
+      "get": {
+        "summary": "Get the OpenAPI specification",
+        "description": "Serves the openapi.json file.",
+        "responses": {
+          "200": {
+            "description": "The OpenAPI specification in JSON format",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/docs": {
+      "get": {
+        "summary": "Get the API documentation",
+        "description": "Serves the documentation HTML file.",
+        "responses": {
+          "200": {
+            "description": "Documentation HTML page",
+            "content": {
+              "text/html": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiToken": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "Authorization",
+        "description": "User token (user id) for authentication"
+      }
+    },
+    "schemas": {
+      "AuthenticateRequest": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "attributes": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                },
+                "required": ["username", "password"]
+              }
+            },
+            "required": ["attributes"]
+          }
+        },
+        "required": ["data"]
+      },
+      "AuthenticateResponse": {
+        "type": "object",
+        "properties": {
+          "meta": {
+            "type": "object",
+            "properties": {
+              "token": {
+                "type": "string"
+              }
+            },
+            "required": ["token"]
+          }
+        },
+        "required": ["meta"]
+      },
+      "ConversationAttributes": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "author": {
+            "type": "string"
+          },
+          "messages": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Message"
+            }
+          }
+        },
+        "required": ["name", "author", "messages"]
+      },
+      "Conversation": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["conversations"]
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "attributes": {
+            "$ref": "#/components/schemas/ConversationAttributes"
+          }
+        },
+        "required": ["type", "id", "attributes"]
+      },
+      "ConversationRequest": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "attributes": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  }
+                },
+                "required": ["name"]
+              }
+            },
+            "required": ["attributes"]
+          }
+        },
+        "required": ["data"]
+      },
+      "MessageAttributes": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string"
+          },
+          "author": {
+            "type": "string"
+          }
+        },
+        "required": ["text", "author"]
+      },
+      "Message": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["messages"]
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "attributes": {
+            "$ref": "#/components/schemas/MessageAttributes"
+          }
+        },
+        "required": ["type", "id", "attributes"]
+      },
+      "MessageRequest": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "attributes": {
+                "type": "object",
+                "properties": {
+                  "text": {
+                    "type": "string"
+                  }
+                },
+                "required": ["text"]
+              }
+            },
+            "required": ["attributes"]
+          }
+        },
+        "required": ["data"]
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "detail": {
+            "type": "string"
+          }
+        },
+        "required": ["status", "title", "detail"]
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "errors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        },
+        "required": ["errors"]
+      }
+    }
+  }
+}
